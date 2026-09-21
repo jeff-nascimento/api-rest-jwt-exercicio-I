@@ -1,22 +1,34 @@
 "use strict";
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("tarefas", {
+    await queryInterface.createTable("roles_permissions", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      titulo: {
-        type: Sequelize.STRING,
+
+      role_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: "roles",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
-      descricao: {
-        type: Sequelize.STRING,
-      },
-      concluida: {
-        type: Sequelize.BOOLEAN,
+
+      permission_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: "permissions",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
@@ -28,7 +40,8 @@ module.exports = {
       },
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("tarefas");
+    await queryInterface.dropTable("roles_permissions");
   },
 };

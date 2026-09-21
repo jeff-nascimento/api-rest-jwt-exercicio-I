@@ -1,32 +1,22 @@
 "use strict";
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("usuario_roles", {
+    await queryInterface.createTable("tasks", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      usuario_id: {
-        type: Sequelize.UUID,
-        references: {
-          model: "usuarios",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
+      title: {
+        type: Sequelize.STRING,
       },
-      role_id: {
-        type: Sequelize.UUID,
-        references: {
-          model: "roles",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
+      description: {
+        type: Sequelize.STRING,
+      },
+      completed: {
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,
@@ -38,8 +28,7 @@ module.exports = {
       },
     });
   },
-
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("usuario_roles");
+    await queryInterface.dropTable("tasks");
   },
 };
