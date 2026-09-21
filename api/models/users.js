@@ -8,7 +8,22 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.belongsToMany(models.roles, {
+        through: models.users_roles,
+        as: "users_roles",
+        foreignKey: "user_id",
+      });
+
+      this.belongsToMany(models.permissions, {
+        through: models.users_permissions,
+        as: "user_permissions",
+        foreignKey: "user_id",
+      });
+
+      this.hasMany(models.tasks, {
+        foreignKey: "user_id",
+        as: "user_tasks",
+      });
     }
   }
   users.init(
@@ -20,6 +35,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "users",
+      defaultScope: {
+        attributes: {
+          exclude: ["password"],
+        },
+      },
     },
   );
   return users;
