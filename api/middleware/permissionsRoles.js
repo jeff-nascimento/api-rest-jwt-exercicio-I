@@ -1,5 +1,8 @@
-//esse arquivo não vai olhar para se o usuário possui uma das roles permitidas isso é papel de permissões
-//e sim olhar as permissões que chegam indiretamente pelas roles que o usuário possui
+//este middleware não verifica se o usuário possui uma das roles permitidas.
+//isso seria responsabilidade de um middleware de roles.
+
+//aqui, o objetivo é verificar se o usuário possui determinada permissão diretamente ou indiretamente
+// através das roles que ele possui.
 
 const database = require("../models");
 
@@ -9,7 +12,7 @@ const permissionsRoles = (allowedPermissions) => {
   return async (req, res, next) => {
     const userId = req.userId;
 
-    const user = database.users.findOne({
+    const user = await database.users.findOne({
       where: {
         id: userId,
       },
@@ -26,7 +29,8 @@ const permissionsRoles = (allowedPermissions) => {
       return res.status(401).send("Usuário não encontrado.");
     }
 
-    //como mapeou todas as roles existentes de cada usuário, agora pega o id dessas roles e deixa salvo para usar abaixo
+    //como mapeou todas as roles existentes do usuário com id procurado,
+    // agora pega o id dessas roles e deixa salvo para usar abaixo
 
     const roleIds = user.users_roles.map((role) => role.id);
 
@@ -34,11 +38,14 @@ const permissionsRoles = (allowedPermissions) => {
       return res.status(401).send("Usuário não possui role.");
     }
 
-    //essa função vai procurar todos os registros dentro de roles, porque em roles? porque agora vai usar a
+    //essa função vai procurar todos os registros de roles do usuário procurado,
+    // porque em roles? porque agora vai usar a
     //interação de papel e o que a pessoa pode fazer com esse papel, então vai da interação de role e permissoes
-    const roles = database.roles.findAll({
-      //como queremos todos os registros de todos os tipos de permissões não podemos apenas colocar um id
-      //ele não achará todos os casos, para isso devemos usar o operado Op do sequelize, que serve para diversas
+    const roles = await database.roles.findAll({
+      //como o usuário pode possuir mais de uma role, não podemos pesquisar apenas por um ID.
+      //o Op.in permite verificar se o ID da role está contido no array roleIds,
+      //retornando todas as roles que pertencem ao usuário.
+      //para isso devemos usar o operado Op do sequelize, que serve para diversas
       //coisas, verificar se é menor que, maior que, igual, entre, etc. Um desses usos é para verificar se
       //está dentro (in), nesse caso dentro do roleIds, ou seja, vai verificar se o id que queremos está contido
       //dentro de um dos ids selecionados anteriormente
@@ -57,8 +64,22 @@ const permissionsRoles = (allowedPermissions) => {
       ],
     });
 
-    if (!roles) {
-      return res.status(401).send("Permissão não encontrada para essa ação.");
+    //percorre as roles do usuário e verifica se alguma delas possui uma permissão permitida.
+    //para cada role, o map() transforma os objetos de permissão em seus respectivos nomes.
+    //depois, o some() interno verifica se algum desses nomes está presente em allowedPermissions(requisição do user).
+    //se alguma role possuir uma das permissões permitidas, o some() externo retorna true.
+    const hasPermission = roles.some((role) =>
+      role.roles_permissions
+        .map((permission) => permission.name)
+        .some((name) => allowedPermissions.includes(name)),
+    );
+
+    if (!hasPermission) {
+      return res.status(401).send("Usuário não possui permissão para a ação.");
     }
+
+    next();
   };
 };
+
+module.exports = permissionsRoles;
