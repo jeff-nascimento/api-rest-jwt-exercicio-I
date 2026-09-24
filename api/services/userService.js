@@ -3,10 +3,8 @@ const bcrypt = require("bcryptjs");
 
 //não foi passado id para service porque ele já está como defaultValue: Sequelize.UUIDV4 lá no banco de dados
 
-//primeiro método do crud, create
 const create = async (dto) => {
-  //pega os valores de nome email e senha do dto -> dados que vão ser enviados pelo controller que serão
-  //pegos quando tentar criar um novo usuário
+  //pega os valores de nome email e senha do dto -> dados que vão ser enviados pelo controller
   const userName = dto.name;
   const userEmail = dto.email;
   const userPassword = dto.password;
@@ -43,4 +41,33 @@ const create = async (dto) => {
   }
 };
 
-module.exports = { create };
+const findAll = async () => {
+  //find all não necessáriamente precisa ter um where, esse código é um exemplo disso, porque vai trazer todos os dados
+  //de todos os usuários
+  const users = await database.users.findAll({
+    //coloca dois includes, para verificar nas duas tabelas, tanto na de roles quanto de permissions
+    include: [
+      {
+        model: database.roles,
+        as: "users_roles",
+        //por que o through? porque through serve para fazer a interação entre as tabelas, ele sinaliza que vai
+        //ter duas tabelas interagindo entre si, como essas tem, passando o attributes vazios sinaliza que
+        //não vai trazer os valores desses attributes, poluindo o resultado da requisição
+        through: {
+          attributes: [],
+        },
+      },
+      {
+        model: database.permissions,
+        as: "user_permissions",
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  });
+
+  return users;
+};
+
+module.exports = { create, findAll };
