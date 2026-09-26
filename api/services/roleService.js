@@ -2,7 +2,7 @@ const database = require("../models");
 
 const create = async (dto) => {
   const name = dto.name;
-  const desciption = dto.desciption;
+  const description = dto.description;
 
   const role = await database.roles.findOne({
     where: {
@@ -10,14 +10,16 @@ const create = async (dto) => {
     },
   });
 
+  //única diferença desse arquivo para o de userService é que ele verifica se já tem uma role com o mesmo nome
+  //para que elas não venham duplicadas
   if (role) {
-    throw new Error("Há uma role com esse nome.");
+    throw new Error("Role com nome mesmo nome cadastrado.");
   }
 
   try {
     const newRole = await database.roles.create({
       name,
-      desciption,
+      description,
     });
     return newRole;
   } catch (error) {
@@ -36,11 +38,8 @@ const findAll = async () => {
           attributes: [],
         },
       },
-    ],
-
-    include: [
       {
-        model: database.users,
+        model: database.permissions,
         as: "roles_permissions",
         attributes: ["id", "name"],
         through: {
@@ -67,11 +66,8 @@ const findById = async (id) => {
           attributes: [],
         },
       },
-    ],
-
-    include: [
       {
-        model: database.users,
+        model: database.permissions,
         as: "roles_permissions",
         attributes: ["id", "name"],
         through: {
@@ -81,6 +77,10 @@ const findById = async (id) => {
     ],
   });
 
+  if (!role) {
+    throw new Error("Não há role com esse ID.");
+  }
+
   return role;
 };
 
@@ -89,7 +89,7 @@ const update = async (dto) => {
 
   try {
     role.name = dto.name;
-    role.desciption = dto.desciption;
+    role.description = dto.description;
 
     await role.save();
   } catch (error) {
@@ -106,3 +106,5 @@ const remove = async (id) => {
     throw new Error("Erro interno do servidor.");
   }
 };
+
+module.exports = { create, findAll, findById, update, remove };
