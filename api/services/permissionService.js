@@ -33,11 +33,17 @@ const findAll = async () => {
         model: database.users,
         as: "permissions_users",
         attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
       },
       {
         model: database.roles,
         as: "permissions_roles",
         attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
       },
     ],
   });
@@ -55,11 +61,17 @@ const findById = async (id) => {
         model: database.users,
         as: "permissions_users",
         attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
       },
       {
         model: database.roles,
         as: "permissions_roles",
         attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
       },
     ],
   });
@@ -83,3 +95,15 @@ const update = async (dto) => {
     throw new Error("Erro interno do servidor.");
   }
 };
+
+const remove = async (id) => {
+  const permission = await findById(id);
+
+  try {
+    await permission.destroy();
+  } catch (error) {
+    throw new Error("Erro interno do servidor.");
+  }
+};
+
+module.exports = { create, findAll, findById, update, remove };
