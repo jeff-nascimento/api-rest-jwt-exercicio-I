@@ -55,7 +55,7 @@ const findAll = async () => {
 const findById = async (id) => {
   const role = await database.roles.findOne({
     where: {
-      id: id,
+      id,
     },
     include: [
       {

@@ -26,11 +26,11 @@ const create = async (dto) => {
   }
 };
 
-const finAll = async () => {
+const findAll = async () => {
   const permissions = await database.permissions.findAll({
     include: [
       {
-        model: database.user,
+        model: database.users,
         as: "permissions_users",
         attributes: ["id", "name"],
       },
@@ -48,11 +48,11 @@ const finAll = async () => {
 const findById = async (id) => {
   const permission = await database.permissions.findOne({
     where: {
-      id: id,
+      id,
     },
     include: [
       {
-        model: database.user,
+        model: database.users,
         as: "permissions_users",
         attributes: ["id", "name"],
       },
@@ -64,5 +64,22 @@ const findById = async (id) => {
     ],
   });
 
+  if (!permission) {
+    throw new Error("Não há permissões para esse ID.");
+  }
+
   return permission;
+};
+
+const update = async (dto) => {
+  const permission = await findById(dto.id);
+
+  try {
+    permission.name = dto.name;
+    permission.description = dto.description;
+
+    await permission.save();
+  } catch (error) {
+    throw new Error("Erro interno do servidor.");
+  }
 };
