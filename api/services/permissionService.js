@@ -1,5 +1,7 @@
 const database = require("../models");
 
+//esse arquivo é semelhante a roleService e a userService por isso não tem comentário
+
 const create = async (dto) => {
   const name = dto.name;
   const description = dto.description;
