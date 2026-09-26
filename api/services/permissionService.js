@@ -44,3 +44,25 @@ const finAll = async () => {
 
   return permissions;
 };
+
+const findById = async (id) => {
+  const permission = await database.permissions.findOne({
+    where: {
+      id: id,
+    },
+    include: [
+      {
+        model: database.user,
+        as: "permissions_users",
+        attributes: ["id", "name"],
+      },
+      {
+        model: database.roles,
+        as: "permissions_roles",
+        attributes: ["id", "name"],
+      },
+    ],
+  });
+
+  return permission;
+};
