@@ -4,7 +4,7 @@ const create = async (dto) => {
   const name = dto.name;
   const description = dto.description;
 
-  const permission = database.permissions.findOne({
+  const permission = await database.permissions.findOne({
     where: {
       name,
     },
@@ -15,11 +15,32 @@ const create = async (dto) => {
   }
 
   try {
-    const newPermission = database.permissions.create({
+    const newPermission = await database.permissions.create({
       name,
       description,
     });
+
+    return newPermission;
   } catch (error) {
     throw new Error("Erro interno do servidor.");
   }
+};
+
+const finAll = async () => {
+  const permissions = await database.permissions.findAll({
+    include: [
+      {
+        model: database.user,
+        as: "permissions_users",
+        attributes: ["id", "name"],
+      },
+      {
+        model: database.roles,
+        as: "permissions_roles",
+        attributes: ["id", "name"],
+      },
+    ],
+  });
+
+  return permissions;
 };
