@@ -69,4 +69,4 @@ const securityService = async (dto) => {
   return updatedUser;
 };
 
-module.exports = securityService;
+module.exports = { aclService: securityService };

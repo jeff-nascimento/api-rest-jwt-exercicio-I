@@ -117,6 +117,8 @@ const update = async (dto) => {
     //depois usa o método do sequelize para salvar a alteração no banco de dados, tem que colocar await porque é
     //assíncrona
     await user.save();
+
+    return user;
   } catch (error) {
     throw new Error("Erro ao atualizar usuário.");
   }

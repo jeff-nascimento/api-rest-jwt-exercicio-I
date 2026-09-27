@@ -3,20 +3,20 @@ const database = require("../models");
 //método create é quase igual ao user, única diferença é que trabalha com o model tasks
 const create = async (dto) => {
   const title = dto.title;
-  const desciption = dto.desciption;
-  const userId = req.userId;
+  const description = dto.description;
+  const userId = dto.userId;
 
-  const createTask = await database.tasks.create({
-    title,
-    desciption,
-    user_id: userId,
-  });
+  try {
+    const createTask = await database.tasks.create({
+      title,
+      description,
+      user_id: userId,
+    });
 
-  if (createTask) {
-    throw new Error("Tarefa já cadastrada para esse usuário.");
+    return createTask;
+  } catch (error) {
+    throw new Error("Erro interno do servidor.");
   }
-
-  return createTask;
 };
 
 //método um pocuo diferente, tem dois métodos para a mesma coisa, esse método aqui trás todas as tarefas, porém
@@ -39,10 +39,6 @@ const findAll = async () => {
   const tasks = await database.tasks.findAll({
     attributes: ["id", "title", "description", "completed", "user_id"],
   });
-
-  if (tasks.length === 0) {
-    throw new Error("Nenhuma tarefa foi cadastrada.");
-  }
 
   return tasks;
 };
@@ -75,16 +71,12 @@ const findById = async (id, userId, isAdmin) => {
 //update a remove seguem a mesma linha de raciocínio, para atualizar é igual em userService, porém fazem uma veri
 //ficação de usuário para saber se ele pode ver a informação, mesma coisa de findById, verifica se não é admin e se
 //ele tem id diferente ao id do dono da tarefa
-const update = async (id, title, desciption, userId, isAdmin) => {
-  const task = await findById(id);
-
-  if (!isAdmin && task.user_id !== userId) {
-    throw new Error("Tarefa não encontrada.");
-  }
+const update = async (id, title, description, userId, isAdmin) => {
+  const task = await findById(id, userId, isAdmin);
 
   try {
     task.title = title;
-    task.desciption = desciption;
+    task.description = description;
 
     await task.save();
   } catch (error) {
@@ -93,11 +85,7 @@ const update = async (id, title, desciption, userId, isAdmin) => {
 };
 
 const remove = async (id, userId, isAdmin) => {
-  const task = await findById(id);
-
-  if (!isAdmin && task.user_id !== userId) {
-    throw new Error("Tarefa não encontrada.");
-  }
+  const task = await findById(id, userId, isAdmin);
 
   try {
     await task.destroy();

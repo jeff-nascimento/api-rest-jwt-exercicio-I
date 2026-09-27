@@ -38,4 +38,4 @@ const authService = async (dto) => {
   return { accesToken: token };
 };
 
-module.exports = authService;
+module.exports = { login: authService };
