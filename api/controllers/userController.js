@@ -13,12 +13,12 @@ const createUser = async (req, res) => {
 
   const { name, email, password } = body;
   try {
-    const user = await create({ name, email, password });
+    const newUser = await create({ name, email, password });
 
     const result = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
     };
 
     return res.status(201).send(result);
@@ -81,4 +81,12 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     return res.status(404).send({ message: error.message });
   }
+};
+
+module.exports = {
+  createUser,
+  findAllUsers,
+  findUserById,
+  updateUser,
+  deleteUser,
 };
