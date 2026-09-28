@@ -92,6 +92,8 @@ const update = async (dto) => {
     role.description = dto.description;
 
     await role.save();
+
+    return role;
   } catch (error) {
     throw new Error("Erro interno do servidor.");
   }

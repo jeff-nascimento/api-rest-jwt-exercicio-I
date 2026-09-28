@@ -35,7 +35,7 @@ const authService = async (dto) => {
     expiresIn: "1d",
   });
 
-  return { accesToken: token };
+  return { accessToken: token };
 };
 
 module.exports = { login: authService };

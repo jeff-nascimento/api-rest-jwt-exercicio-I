@@ -93,6 +93,8 @@ const update = async (dto) => {
     permission.description = dto.description;
 
     await permission.save();
+
+    return permission;
   } catch (error) {
     throw new Error("Erro interno do servidor.");
   }

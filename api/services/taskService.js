@@ -79,6 +79,8 @@ const update = async (id, title, description, userId, isAdmin) => {
     task.description = description;
 
     await task.save();
+
+    return task;
   } catch (error) {
     throw new Error("Erro ao atualizar tarefa.");
   }

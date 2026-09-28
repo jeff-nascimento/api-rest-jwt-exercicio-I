@@ -110,6 +110,7 @@ const update = async (dto) => {
   const user = await findById(dto.id);
 
   //esse fica diferente, coloca um try cath porque ele não tem como fazer verificação se não for em try catch
+
   try {
     //salva o nome do usuário como o novo nome digitado, faz isso com email também
     user.name = dto.name;
