@@ -4,11 +4,9 @@ const {
   findById,
   update,
   remove,
-} = require("../services/roleService.js");
+} = require("../services/permissionService.js");
 
-//POST /roles):
-
-const createRole = async (req, res) => {
+const createPermission = async (req, res) => {
   const body = req.body ?? {};
 
   const { name, description } = body;
@@ -31,43 +29,35 @@ const createRole = async (req, res) => {
   }
 
   try {
-    const newRole = await create({ name, description });
+    const newPermission = await create({ name, description });
 
-    return res.status(201).send(newRole);
+    return res.status(201).send(newPermission);
   } catch (error) {
     return res.status(400).send({ message: error.message });
   }
 };
 
-//GET /roles)
-
-const findAllRoles = async (req, res) => {
+const findAllPermissions = async (req, res) => {
   try {
-    const roles = await findAll();
-
-    return res.status(200).send(roles);
+    const permissions = await findAll();
+    return res.status(200).send(permissions);
   } catch (error) {
     return res.status(400).send({ message: error.message });
   }
 };
 
-//GET /roles/:id)
-
-const findRoleById = async (req, res) => {
+const findPermissionById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const role = await findById(id);
-
-    return res.status(200).send(role);
+    const permission = await findById(id);
+    return res.status(200).send(permission);
   } catch (error) {
     return res.status(404).send({ message: error.message });
   }
 };
 
-//PUT /roles/:id)
-
-const updateRole = async (req, res) => {
+const updatePermission = async (req, res) => {
   const { id } = req.params;
 
   const body = req.body ?? {};
@@ -89,39 +79,31 @@ const updateRole = async (req, res) => {
     if (typeof description !== "string") {
       return res.status(400).send({ message: "Valores dos campos inválidos." });
     }
-
-    if (description.trim() === "") {
-      return res
-        .status(400)
-        .send({ message: "Os campos não podem ser vazios." });
-    }
   }
-
   try {
-    const role = await update({ id, name, description });
-    return res.status(200).send(role);
+    const permission = await update({ id, name, description });
+
+    return res.status(200).send(permission);
   } catch (error) {
     return res.status(404).send({ message: error.message });
   }
 };
 
-//DELETE /roles/:id)
-
-const deleteRole = async (req, res) => {
+const deletePermission = async (req, res) => {
   const { id } = req.params;
-
   try {
     await remove(id);
-    return res.status(204).send();
+
+    return res.status(200).send();
   } catch (error) {
     return res.status(404).send({ message: error.message });
   }
 };
 
 module.exports = {
-  createRole,
-  findAllRoles,
-  findRoleById,
-  updateRole,
-  deleteRole,
+  createPermission,
+  findAllPermissions,
+  findPermissionById,
+  updatePermission,
+  deletePermission,
 };
