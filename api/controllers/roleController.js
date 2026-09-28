@@ -89,12 +89,6 @@ const updateRole = async (req, res) => {
     if (typeof description !== "string") {
       return res.status(400).send({ message: "Valores dos campos inválidos." });
     }
-
-    if (description.trim() === "") {
-      return res
-        .status(400)
-        .send({ message: "Os campos não podem ser vazios." });
-    }
   }
 
   try {

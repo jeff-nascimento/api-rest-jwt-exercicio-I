@@ -94,7 +94,7 @@ const deletePermission = async (req, res) => {
   try {
     await remove(id);
 
-    return res.status(200).send();
+    return res.status(204).send();
   } catch (error) {
     return res.status(404).send({ message: error.message });
   }
