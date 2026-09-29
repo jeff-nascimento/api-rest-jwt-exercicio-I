@@ -18,6 +18,17 @@ const createUser = async (req, res) => {
   //pega name, email e password do body, no service precisa de tudo isso para criar o arquivo
   const { name, email, password } = body;
 
+  if (!name || !email) {
+    return res.status(400).send({ message: "Campos obrigatórios." });
+  }
+  if (typeof name !== "string" || typeof email !== "string") {
+    return res.status(400).send({ message: "Valores dos campos inválidos." });
+  }
+
+  if (name.trim() === "" || email.trim() === "") {
+    return res.status(400).send({ message: "Os campos não podem ser vazios." });
+  }
+
   try {
     //chama o método create de service, lembre-se ele é async então precisa do await aqui
     const newUser = await create({ name, email, password });
@@ -49,7 +60,7 @@ const findAllUsers = async (req, res) => {
     const users = await findAll();
     return res.status(200).send(users);
   } catch (error) {
-    return res.status(400).send({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -65,7 +76,7 @@ const findUserById = async (req, res) => {
 
     return res.status(200).send(user);
   } catch (error) {
-    return res.status(400).send({ message: error.message });
+    return res.status(404).send({ message: error.message });
   }
 };
 
@@ -79,6 +90,17 @@ const updateUser = async (req, res) => {
   const body = req.body ?? {};
 
   const { name, email } = body;
+
+  if (!name || !email) {
+    return res.status(400).send({ message: "Campos obrigatórios." });
+  }
+  if (typeof name !== "string" || typeof email !== "string") {
+    return res.status(400).send({ message: "Valores dos campos inválidos." });
+  }
+
+  if (name.trim() === "" || email.trim() === "") {
+    return res.status(400).send({ message: "Os campos não podem ser vazios." });
+  }
 
   try {
     const user = await update({ id, name, email });

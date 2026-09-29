@@ -24,10 +24,10 @@ const createRole = async (req, res) => {
     return res.status(400).send({ message: "Os campos não podem ser vazios." });
   }
 
-  if (description) {
-    if (typeof description !== "string") {
-      return res.status(400).send({ message: "Valores dos campos inválidos." });
-    }
+  if (description !== undefined && typeof description !== "string") {
+    return res.status(400).send({
+      message: "Valores dos campos inválidos.",
+    });
   }
 
   try {
@@ -47,7 +47,7 @@ const findAllRoles = async (req, res) => {
 
     return res.status(200).send(roles);
   } catch (error) {
-    return res.status(400).send({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -85,10 +85,10 @@ const updateRole = async (req, res) => {
     return res.status(400).send({ message: "Os campos não podem ser vazios." });
   }
 
-  if (description) {
-    if (typeof description !== "string") {
-      return res.status(400).send({ message: "Valores dos campos inválidos." });
-    }
+  if (description !== undefined && typeof description !== "string") {
+    return res.status(400).send({
+      message: "Valores dos campos inválidos.",
+    });
   }
 
   try {

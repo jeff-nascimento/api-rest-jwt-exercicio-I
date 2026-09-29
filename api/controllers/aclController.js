@@ -16,7 +16,9 @@ const aclController = async (req, res) => {
     permissions.every((permission) => typeof permission === "string");
 
   if (!rolesValid || !permissionsValid) {
-    return res.status(400).send("Formato de dados inválido.");
+    return res.status(400).send({
+      message: "Formato de dados inválido.",
+    });
   }
 
   try {
