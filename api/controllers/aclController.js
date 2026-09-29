@@ -9,6 +9,8 @@ const aclController = async (req, res) => {
 
   const { roles, permissions } = body;
 
+  //verifica se o roles e o permission são array e verifica para cada indice no array roles e permissions se
+  //o tipo é string
   const rolesValid =
     Array.isArray(roles) && roles.every((role) => typeof role === "string");
   const permissionsValid =
@@ -22,6 +24,8 @@ const aclController = async (req, res) => {
   }
 
   try {
+    //lembrando que aclservice atualiza os dados das permissões, então após a verificação passa os valores novos
+    //que serao usados para aclservice
     const updatedUser = await aclService({
       userId: id,
       roles,
